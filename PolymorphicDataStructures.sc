@@ -1,14 +1,34 @@
+// These 3 lines define a simplified List type
 sealed trait List[+A]
 case object Nil extends List[Nothing]
-case class Cons[+A](head:A, tail:List[A]) extends List[A]
+case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
-val ex1: List[Double] = Nil
-val ex2:List[Int] = Cons(1,Nil)
-val ex3: List[String] = Cons("A", Cons("b",Nil))
+// This companion object contains basic operations for the List type
+object List {
+  def sum(ints: List[Int]): Int = ints match {
+    case Nil => 0
+    case Cons(x,xs) => x + sum(xs)
+  }
 
-val ex4 = Cons(4,Nil)
-ex4.toString
-ex3.toString
+  def product(ds: List[Double]): Double = ds match {
+    case Nil => 1.0
+    case Cons(0.0, _) => 0.0
+    case Cons(x,xs) => x * product(xs)
+  }
 
+  def apply[A](as: A*): List[A] =
+    if (as.isEmpty) Nil
+    else Cons(as.head, apply(as.tail: _*))
+}
 
+// The next line is the value that I want to return.
+val x = List(1,2,3,4,5) match {
+  case Cons(x, Cons(2, Cons(4, _))) => x
+  case Nil => 42
+  case Cons(x, Cons(y, Cons(3, Cons(4, _)))) => x + y
+  case Cons(h, t) => h + List.sum(t)
+  case _ => 101
+}
 
+List(1,2,3) match { case Cons(_,t) => t }
+List(1,2,3) match { case Cons(h,_) => h }
