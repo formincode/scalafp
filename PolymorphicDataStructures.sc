@@ -15,6 +15,35 @@ object List {
     case Cons(_,xs) => Cons(head,xs)
   }
 
+  def init[A](l: List[A]): List[A] =
+    l match {
+      case Nil => sys.error("init of empty list")
+      case Cons(_,Nil) => Nil
+      case Cons(h,t) => Cons(h,init(t))
+  }
+
+  def initMine[A](l: List[A]): List[A]={
+    def go(l: List[A]): List[A] = l match {
+      case Nil => l
+      case Cons(x:A,Cons(xs,Nil)) => Cons(x,Nil)
+      case Cons(x:A,xs: List[A]) => Cons(x,go(xs))
+    }
+    go(l)
+  }
+
+  //Accumulate results and then reverse
+  def init2[A](l: List[A]): List[A] = {
+    import collection.mutable.ListBuffer
+    val buf = new ListBuffer[A]
+    @annotation.tailrec
+    def go(cur: List[A]): List[A] = cur match {
+      case Nil => sys.error("init of empty list")
+      case Cons(_,Nil) => List(buf.toList: _*)
+      case Cons(h,t) => buf += h; go(t)
+    }
+    go(l)
+  }
+
   def drop[A](l: List[A], n: Int): List[A] =
     if (n <= 0) l
     else l match {
@@ -79,6 +108,7 @@ List.setHead(5,List(1,2,3))
 List.drop(List(1,2,3),1)
 List.drop(List(1,2,3),2)
 List.dropWhile(List(1,2,3),(x:Int) => x == 3)
+List.init(List(1,2,3,4))
 
 
 
