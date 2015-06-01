@@ -5,6 +5,47 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A]
 
 // This companion object contains basic operations for the List type
 object List {
+  def tail[A](ints : List[A]):List[A] = ints match {
+    case Nil => Nil
+    case Cons(_,xs) => xs
+  }
+
+  def setHead[A](head:A,ints : List[A]):List[A] = ints match {
+    case Nil => Nil
+    case Cons(_,xs) => Cons(head,xs)
+  }
+
+  def drop[A](l: List[A], n: Int): List[A] =
+    if (n <= 0) l
+    else l match {
+      case Nil => Nil
+      case Cons(_,t) => drop(t, n-1)
+    }
+
+  def dropMine[A](l: List[A], n: Int): List[A] = {
+    @annotation.tailrec
+    def go(n: Int, l: List[A]): List[A] = {
+      if (n <= 1) List.tail(l)
+      else go(n - 1, List.tail(l))
+    }
+    go(n, l)
+  }
+
+  def dropWhile[A](l: List[A], f: A => Boolean): List[A] =
+    l match {
+      case Cons(h,t) if f(h) => dropWhile(t, f)
+      case _ => l
+    }
+
+  def dropWhileMine[A](l: List[A], f: A => Boolean): List[A]={
+    def go(l: List[A]): List[A] = l match {
+      case Nil => l
+      case Cons(x:A,xs: List[A]) if f(x) => go(xs)
+      case Cons(x:A,xs: List[A]) => Cons(x,go(xs))
+    }
+    go(l)
+  }
+
   def sum(ints: List[Int]): Int = ints match {
     case Nil => 0
     case Cons(x,xs) => x + sum(xs)
@@ -32,3 +73,14 @@ val x = List(1,2,3,4,5) match {
 
 List(1,2,3) match { case Cons(_,t) => t }
 List(1,2,3) match { case Cons(h,_) => h }
+List.sum(List(1,2,3))
+List.tail(List(1,2,3))
+List.setHead(5,List(1,2,3))
+List.drop(List(1,2,3),1)
+List.drop(List(1,2,3),2)
+List.dropWhile(List(1,2,3),(x:Int) => x == 3)
+
+
+
+
+
